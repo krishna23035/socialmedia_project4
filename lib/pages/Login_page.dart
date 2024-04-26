@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:socialmedia_project4/component/button.dart';
-import 'package:socialmedia_project4/component/text_field.dart';
+import 'package:socialmedia_project4/widget/button.dart';
+import 'package:socialmedia_project4/textfield/text_field.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;

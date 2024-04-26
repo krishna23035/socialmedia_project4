@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../helper/helper_method.dart';
 import 'comment_button.dart';
-import 'like_button.dart';
+import '../widget/like_button.dart';
 
 class FeedPost extends StatefulWidget {
   final String user;
@@ -271,7 +271,7 @@ class _FeedPostState extends State<FeedPost> {
                     }).toList(),
                   ),
                 );
-              })
+              }),
         ],
       ),
     );

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
-import '../component/textbox.dart';
+import '../widget/textbox.dart';
 import 'homepage.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -64,31 +64,40 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        bottomNavigationBar: GNav(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          gap: 10,
-          backgroundColor: Colors.grey.shade900,
-          color: Colors.white70,
-          activeColor: Colors.white70,
-          tabs: [],
+      bottomNavigationBar: GNav(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        gap: 10,
+        backgroundColor: Colors.grey.shade900,
+        color: Colors.white70,
+        activeColor: Colors.white70,
+        tabs: [],
+      ),
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Colors.blue,
+        leading: IconButton(
+          // Use 'leading' property instead of 'actions'
+          onPressed: () => Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => const HomePage())),
+          icon: Icon(Icons.arrow_back),
         ),
-        appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: Colors.blue,
-          leading: IconButton(
-            // Use 'leading' property instead of 'actions'
-            onPressed: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => const HomePage())),
-            icon: Icon(Icons.arrow_back),
-          ),
-          title: const Text(
-            'Profile',
-            style: TextStyle(color: Colors.white70),
-          ),
+        title: const Text(
+          'Profile',
+          style: TextStyle(color: Colors.white70),
         ),
+      ),
 
-        //  backgroundColor: Colors.grey.shade300,
-        body: StreamBuilder<DocumentSnapshot>(
+      //  backgroundColor: Colors.grey.shade300,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.pink, Colors.blue, Colors.grey],
+            stops: [0.0, 0.5, 1.0], // Adjust color stops as needed
+          ),
+        ),
+        child: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
               .collection("Users")
               .doc(currentUser.email)
@@ -98,9 +107,7 @@ class _ProfilePageState extends State<ProfilePage> {
               final userData = snapshot.data!.data() as Map<String, dynamic>;
               return ListView(
                 children: [
-                  const SizedBox(
-                    height: 50,
-                  ),
+                  const SizedBox(height: 50),
                   const Icon(
                     Icons.person,
                     size: 72,
@@ -110,9 +117,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.grey.shade700),
                   ),
-                  const SizedBox(
-                    height: 50,
-                  ),
+                  const SizedBox(height: 50),
                   Padding(
                     padding: const EdgeInsets.only(left: 25.0),
                     child: Text(
@@ -121,29 +126,28 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                   MyTextBox(
-                      text: userData['username'],
-                      sectionName: 'username',
-                      onPressed: () {
-                        editFeild('username');
-                      }),
-                  MyTextBox(
-                      text: userData['bio'],
-                      sectionName: 'bio',
-                      onPressed: () {
-                        editFeild('bio');
-                      }),
-                  const SizedBox(
-                    height: 10,
+                    text: userData['username'],
+                    sectionName: 'username',
+                    onPressed: () {
+                      editFeild('username');
+                    },
                   ),
                   MyTextBox(
-                      text: userData['contact'].toString(),
-                      sectionName: 'contact',
-                      onPressed: () {
-                        editFeild('contact');
-                      }),
-                  const SizedBox(
-                    height: 10,
+                    text: userData['bio'],
+                    sectionName: 'bio',
+                    onPressed: () {
+                      editFeild('bio');
+                    },
                   ),
+                  const SizedBox(height: 10),
+                  MyTextBox(
+                    text: userData['contact'].toString(),
+                    sectionName: 'contact',
+                    onPressed: () {
+                      editFeild('contact');
+                    },
+                  ),
+                  const SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.only(left: 25.0),
                     child: Text(
@@ -162,6 +166,8 @@ class _ProfilePageState extends State<ProfilePage> {
               child: CircularProgressIndicator(),
             );
           },
-        ));
+        ),
+      ),
+    );
   }
 }
