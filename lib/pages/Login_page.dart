@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:socialmedia_project4/component/button.dart';
 import 'package:socialmedia_project4/component/text_field.dart';
 
@@ -47,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
     //     builder: (context) => AlertDialog(
     //           title: Text(message),
     //         ));
-    Fluttertoast.showToast(msg: message);
+    // Fluttertoast.showToast(msg: message);
     // ScaffoldMessenger.of(context).showSnackBar(
     //   SnackBar(
     //     content: Text(message),

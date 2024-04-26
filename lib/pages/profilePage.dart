@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 import '../component/textbox.dart';
@@ -69,34 +70,24 @@ class _ProfilePageState extends State<ProfilePage> {
           backgroundColor: Colors.grey.shade900,
           color: Colors.white70,
           activeColor: Colors.white70,
-          tabs: [
-            GButton(
-                icon: Icons.home,
-                onPressed: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const HomePage()));
-                }),
-            GButton(
-                icon: Icons.person,
-                onPressed: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const ProfilePage()));
-                }),
-          ],
+          tabs: [],
         ),
         appBar: AppBar(
           centerTitle: true,
-          backgroundColor: Colors.grey.shade900,
+          backgroundColor: Colors.blue,
+          leading: IconButton(
+            // Use 'leading' property instead of 'actions'
+            onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const HomePage())),
+            icon: Icon(Icons.arrow_back),
+          ),
           title: const Text(
             'Profile',
             style: TextStyle(color: Colors.white70),
           ),
         ),
-        backgroundColor: Colors.grey.shade300,
+
+        //  backgroundColor: Colors.grey.shade300,
         body: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
               .collection("Users")

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import '../component/button.dart';
 import '../component/text_field.dart';
 
@@ -66,7 +65,7 @@ class _RegisterPageState extends State<RegisterPage> {
     //     builder: (context) => AlertDialog(
     //           title: Text(message),
     //         ));
-    Fluttertoast.showToast(msg: message);
+    //   Fluttertoast.showToast(msg: message);
     // ScaffoldMessenger.of(context).showSnackBar(
     //   SnackBar(
     //     content: Text(message),
