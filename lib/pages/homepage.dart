@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:socialmedia_project4/widget/drawer.dart';
-import 'package:socialmedia_project4/pages/profilePage.dart';
-
 import '../component/feed_post.dart';
 import '../widget/my_drawer.dart';
 import '../textfield/textfield.dart';

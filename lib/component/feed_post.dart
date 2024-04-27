@@ -2,7 +2,9 @@ import 'package:socialmedia_project4/component/comment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:socialmedia_project4/snooze_button/snooze_button.dart';
 
+import '../edit_post/edit_post_page.dart';
 import '../helper/helper_method.dart';
 import 'comment_button.dart';
 import '../widget/like_button.dart';
@@ -76,7 +78,7 @@ class _FeedPostState extends State<FeedPost> {
           title: Text("Add Comment"),
           content: TextField(
             controller: _commentTextController,
-            decoration: InputDecoration(hintText: "Write a comment .. "),
+            decoration: const InputDecoration(hintText: "Write a comment .. "),
           ),
           actions: [
             TextButton(
@@ -96,6 +98,50 @@ class _FeedPostState extends State<FeedPost> {
             ),
           ]),
     );
+  }
+
+  void Snooze() {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+                title: const Text("Snooze Post"),
+                content:
+                    const Text("Do  you want to Snooze this post for 30 days?"),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Cancel"),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final commentDocs = await FirebaseFirestore.instance
+                          .collection("User Posts")
+                          .doc(widget.postId)
+                          .collection("Comments")
+                          .get();
+
+                      for (var doc in commentDocs.docs) {
+                        await FirebaseFirestore.instance
+                            .collection("User Posts")
+                            .doc(widget.postId)
+                            .collection("Comments")
+                            .doc(doc.id)
+                            .delete();
+                      }
+                      FirebaseFirestore.instance
+                          .collection("User Posts")
+                          .doc(widget.postId)
+                          .delete()
+                          .then((value) => print("post deleted"))
+                          .catchError((error) =>
+                              print("failed to Snooze post: $error"));
+
+// dismiss the dialog
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Delete"),
+                  ), // TextButton
+                ]));
   }
 
   void deletePost() {
@@ -146,133 +192,136 @@ class _FeedPostState extends State<FeedPost> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 25, left: 25, right: 25),
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8), color: Colors.white70),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              border: Border(
-                  bottom: BorderSide(
-                width: 1,
-                color: Colors.grey,
-              )),
-            ),
-            child: Column(
-              children: [
-                Row(children: [
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Colors.grey.shade400, shape: BoxShape.circle),
-                    child: const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Icon(
-                        Icons.person,
-                        color: Colors.white70,
+    return Expanded(
+      child: Container(
+        margin: const EdgeInsets.only(top: 25, left: 25, right: 25),
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8), color: Colors.white70),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                    bottom: BorderSide(
+                  width: 1,
+                  color: Colors.grey,
+                )),
+              ),
+              child: Column(
+                children: [
+                  Row(children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Colors.grey.shade400, shape: BoxShape.circle),
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(
+                          Icons.person,
+                          color: Colors.white70,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Text(
-                    widget.user,
-                    style: TextStyle(color: Colors.grey.shade500),
-                  ),
-                  Spacer(),
-                  IconButton(
-                      onPressed: () {
-                        showPopupMenu(context);
-                      },
-                      icon: Icon(Icons.more_vert)),
-                ]),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 60,
+                    const SizedBox(
+                      width: 10,
                     ),
                     Text(
-                      widget.time,
+                      widget.user,
                       style: TextStyle(color: Colors.grey.shade500),
                     ),
-                  ],
-                )
-              ],
+                    const Spacer(),
+                    IconButton(
+                        onPressed: () {
+                          showPopupMenu(context);
+                        },
+                        icon: const Icon(Icons.more_vert)),
+                  ]),
+                  Row(
+                    children: [
+                      const SizedBox(
+                        width: 60,
+                      ),
+                      Text(
+                        widget.time,
+                        style: TextStyle(color: Colors.grey.shade500),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Container(
-            width: 300,
-            height: 100,
-            decoration: const BoxDecoration(
-                color: Colors.white70,
-                border:
-                    Border(bottom: BorderSide(width: 1, color: Colors.grey))),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                widget.post,
-                style: TextStyle(
-                  color: Colors.grey.shade700,
+            const SizedBox(
+              height: 10,
+            ),
+            Container(
+              width: 300,
+              height: 100,
+              decoration: const BoxDecoration(
+                  color: Colors.white70,
+                  border:
+                      Border(bottom: BorderSide(width: 1, color: Colors.grey))),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  widget.post,
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
+                  ),
                 ),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          Row(
-            children: [
-              LikeButton(onTap: toggleLikes, isLiked: isLiked),
-              Text(widget.likes.length.toString()),
-              SizedBox(
-                width: 10,
-              ),
-              CommentButton(onTap: showCommentDialog),
-              SizedBox(
-                width: 5,
-              ),
-              Text('0')
-            ],
-          ),
-          StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("User Posts")
-                  .doc(widget.postId)
-                  .collection("Comments")
-                  .orderBy("CommentTime", descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                return Container(
-                  width: 300,
-                  height: 200,
-                  child: ListView(
-                    shrinkWrap: true, // for nested lists
-                    // physics: const NeverScrollableScrollPhysics(),
-                    children: snapshot.data!.docs.map((doc) {
-                      final commentData = doc.data() as Map<String, dynamic>;
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                LikeButton(onTap: toggleLikes, isLiked: isLiked),
+                Text(widget.likes.length.toString()),
+                const SizedBox(
+                  width: 10,
+                ),
+                CommentButton(onTap: showCommentDialog),
+                const SizedBox(
+                  width: 5,
+                ),
+                SnoozeIconButton(onPressed: Snooze)
+                //   Text('0')
+              ],
+            ),
+            StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection("User Posts")
+                    .doc(widget.postId)
+                    .collection("Comments")
+                    .orderBy("CommentTime", descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return Container(
+                    width: 300,
+                    height: 200,
+                    child: ListView(
+                      shrinkWrap: true, // for nested lists
+                      // physics: const NeverScrollableScrollPhysics(),
+                      children: snapshot.data!.docs.map((doc) {
+                        final commentData = doc.data() as Map<String, dynamic>;
 
-                      return Comment(
-                        text: commentData["CommentText"],
-                        user: commentData["CommentedBy"],
-                        time: formatDate(commentData["CommentTime"]),
-                      );
-                    }).toList(),
-                  ),
-                );
-              }),
-        ],
+                        return Comment(
+                          text: commentData["CommentText"],
+                          user: commentData["CommentedBy"],
+                          time: formatDate(commentData["CommentTime"]),
+                        );
+                      }).toList(),
+                    ),
+                  );
+                }),
+          ],
+        ),
       ),
     );
   }
@@ -296,7 +345,7 @@ class _FeedPostState extends State<FeedPost> {
       context: context,
       position: positionPopup,
       items: [
-        PopupMenuItem(
+        const PopupMenuItem(
           value: 'edit',
           child: Text('Edit'),
         ),
@@ -310,6 +359,12 @@ class _FeedPostState extends State<FeedPost> {
     ).then((value) {
       if (value == 'edit') {
         // Handle edit action
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EditPostPage(postId: widget.postId),
+          ),
+        );
       } else if (value == 'delete') {
         // Handle delete action
       }

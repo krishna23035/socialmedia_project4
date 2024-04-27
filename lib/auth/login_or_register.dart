@@ -1,16 +1,17 @@
-import 'package:flutter/cupertino.dart';
-import 'package:socialmedia_project4/pages/Login_page.dart';
-import 'package:socialmedia_project4/pages/register_page.dart';
+import 'package:flutter/material.dart';
+import '../pages/Login_page.dart';
+import '../pages/register_page.dart';
 
-class LoginRegister extends StatefulWidget {
-  const LoginRegister({super.key});
+class LoginOrRegisterPage extends StatefulWidget {
+  const LoginOrRegisterPage({super.key});
 
   @override
-  State<LoginRegister> createState() => _LoginRegisterState();
+  State<LoginOrRegisterPage> createState() => _LoginOrRegisterPageState();
 }
 
-class _LoginRegisterState extends State<LoginRegister> {
+class _LoginOrRegisterPageState extends State<LoginOrRegisterPage> {
   bool showLoginPage = true;
+
   void togglePages() {
     setState(() {
       showLoginPage = !showLoginPage;
@@ -20,9 +21,13 @@ class _LoginRegisterState extends State<LoginRegister> {
   @override
   Widget build(BuildContext context) {
     if (showLoginPage) {
-      return LoginPage(onTap: togglePages);
+      return LoginPage(
+        onTap: togglePages,
+      );
     } else {
-      return RegisterPage(onTap: togglePages);
+      return RegisterPage(
+        onTap: togglePages,
+      );
     }
   }
 }

@@ -65,5 +65,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'social-media-4fb33.appspot.com',
     iosBundleId: 'com.example.socialmediaProject4',
   );
-
 }

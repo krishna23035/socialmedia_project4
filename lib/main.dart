@@ -4,7 +4,8 @@ import 'package:socialmedia_project4/auth/login_or_register.dart';
 import 'package:socialmedia_project4/pages/Login_page.dart';
 import 'package:socialmedia_project4/pages/register_page.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+
+import 'auth/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
