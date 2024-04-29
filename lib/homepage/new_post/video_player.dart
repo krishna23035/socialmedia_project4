@@ -31,27 +31,27 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   Widget build(BuildContext context) {
     return _controller.value.isInitialized
         ? Stack(
-      alignment: Alignment.bottomCenter,
-      children: <Widget>[
-        AspectRatio(
-          aspectRatio: _controller.value.aspectRatio,
-          child: VideoPlayer(_controller),
-        ),
-        VideoProgressIndicator(
-          _controller,
-          allowScrubbing: true,
-          colors: const VideoProgressColors(
-            playedColor: Colors.green,
-            bufferedColor: Colors.grey,
-            backgroundColor: Colors.black,
-          ),
-        ),
-        _buildControls(),
-      ],
-    )
+            alignment: Alignment.bottomCenter,
+            children: <Widget>[
+              AspectRatio(
+                aspectRatio: _controller.value.aspectRatio,
+                child: VideoPlayer(_controller),
+              ),
+              VideoProgressIndicator(
+                _controller,
+                allowScrubbing: true,
+                colors: const VideoProgressColors(
+                  playedColor: Colors.green,
+                  bufferedColor: Colors.grey,
+                  backgroundColor: Colors.black,
+                ),
+              ),
+              _buildControls(),
+            ],
+          )
         : const Center(
-      child: CircularProgressIndicator(),
-    );
+            child: CircularProgressIndicator(),
+          );
   }
 
   Widget _buildControls() {

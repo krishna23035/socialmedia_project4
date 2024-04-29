@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../helper/helper_method.dart';
+import '../../helper/helper_method.dart';
 
 class EditPostPage extends StatefulWidget {
   final String postId;

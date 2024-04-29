@@ -8,19 +8,24 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.grey.shade900,
+      backgroundColor: Colors.white38,
       elevation: 0,
-      title: Image.asset(
-        'assets/title.png',
-        width: 120,
-        height: 40,
-        color: Colors.white,
+      title:
+          //   'assets/images/87390.png',
+          //   width: 120,
+          //   height: 40,
+          //   color: Colors.white,
+          // ),
+          Image.asset(
+        'assets/images/download (1).png',
+        width: 780,
+        height: 200,
       ),
       actions: [
         IconButton(
           onPressed: signOut,
-          icon: const Icon(Icons.logout),
-          color: Colors.white70,
+          icon: const Icon(Icons.logout_sharp),
+          color: Colors.blue,
         )
       ],
     );

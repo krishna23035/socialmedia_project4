@@ -14,8 +14,16 @@ class MyTextBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-          color: Colors.grey.shade200, borderRadius: BorderRadius.circular(8)),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.yellow,
+            Colors.blue,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
       padding: const EdgeInsets.only(left: 20, bottom: 20),
       margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
       child: Column(
@@ -26,13 +34,17 @@ class MyTextBox extends StatelessWidget {
             children: [
               Text(
                 sectionName,
-                style: TextStyle(color: Colors.grey.shade500),
+                style: TextStyle(
+                    color: Colors.blue,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 25,
+                    fontStyle: FontStyle.italic),
               ),
               IconButton(
                   onPressed: onPressed,
                   icon: Icon(
                     Icons.settings,
-                    color: Colors.grey.shade500,
+                    color: Colors.black,
                   ))
             ],
           ),

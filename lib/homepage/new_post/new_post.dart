@@ -6,9 +6,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
-import 'package:socialmedia_project4/post/video_player.dart';
+import 'package:socialmedia_project4/homepage/new_post/video_player.dart';
 
-import '../textfield/textfield.dart';
+import '../../login/widger/text_field.dart';
 
 class NewPostsBottom extends StatefulWidget {
   const NewPostsBottom({super.key});
@@ -26,10 +26,12 @@ class _NewPostsBottomState extends State<NewPostsBottom> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: const Border(top: BorderSide(width: 1)),
-        color: Colors.grey[900],
+        gradient: LinearGradient(
+          colors: [Colors.yellow, Colors.blue, Colors.blue, Colors.pink],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -92,6 +94,7 @@ class _NewPostsBottomState extends State<NewPostsBottom> {
     if (textController.text.isEmpty &&
         _imageFile == null &&
         _videoFile == null) {
+      // Show error dialog if no message, image, or video is provided
       showDialog(
         context: context,
         builder: (context) {
@@ -117,18 +120,38 @@ class _NewPostsBottomState extends State<NewPostsBottom> {
       String? imageUrl;
       String? videoUrl;
 
+      // Show progress dialog while uploading media
+      showDialog(
+        context: context,
+        barrierDismissible:
+            false, // Prevent dismissing the dialog by tapping outside
+        builder: (context) => AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text("Uploading..."),
+            ],
+          ),
+        ),
+      );
+
       if (_imageFile != null) {
         imageUrl = await uploadFileToStorage(_imageFile!, currentUser.email!);
       }
       if (_videoFile != null) {
         videoUrl = await uploadFileToStorage(_videoFile!, currentUser.email!);
       }
+      Navigator.pop(context); // Dismiss the progress dialog
+
       await FirebaseFirestore.instance.collection("User Posts").add({
         'UserEmail': currentUser.email,
         'Message': textController.text,
         'Image': imageUrl,
         'Video': videoUrl,
         'TimeStamp': Timestamp.now(),
+        'EditedTime': null,
         'Likes': [],
       });
       setState(() {
