@@ -20,34 +20,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final userCollections = FirebaseFirestore.instance.collection("Users");
   File? _imageFile;
   bool _isLoading = false;
-  bool isPrivate = false;
-  int followersCount = 0;
-  int followingCount = 0;
-
-  Future<void> fetchFollowerFollowingCounts() async {
-    //query follower's count
-    final followersQuery = await userCollections
-        .doc(currentUser.email)
-        .collection('Followers')
-        .get();
-    setState(() {
-      followersCount = followersQuery.docs.length;
-    });
-//query following count
-    final followingQuery = await userCollections
-        .doc(currentUser.email)
-        .collection('Following')
-        .get();
-    setState(() {
-      followingCount = followingQuery.docs.length;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchFollowerFollowingCounts(); // Call fetchFollowerFollowingCounts() here
-  }
 
   Future<void> editField(String field) async {
     String newValue = "";
@@ -96,150 +68,218 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-          child: Column(children: [
-        SizedBox(
-          height: MediaQuery.of(context).size.height *
-              0.5, // Adjust height as needed
-          child: StreamBuilder<DocumentSnapshot>(
-            stream: FirebaseFirestore.instance
-                .collection("Users")
-                .doc(currentUser.email)
-                .snapshots(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final userData = snapshot.data!.data() as Map<String, dynamic>;
-                final profilePicturePath = userData['profile_img'] as String?;
-                return ListView(
-                  children: [
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey[200],
-                      ),
-                      child: _imageFile != null
-                          ? CircleAvatar(
-                              radius: 36,
-                              backgroundImage:
-                                  FileImage(File(profilePicturePath!)),
-                            )
-                          : IconButton(
-                              icon: Icon(Icons.person, size: 72),
-                              onPressed: () {
-                                _pickImage();
-                              },
+        child: Column(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height *
+                  0.5, // Adjust height as needed
+              child: StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection("Users")
+                    .doc(currentUser.email)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final userData =
+                        snapshot.data!.data() as Map<String, dynamic>;
+                    final profilePicturePath =
+                        userData['profile_img'] as String?;
+                    return ListView(
+                      children: [
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.grey[200],
+                          ),
+                          child: _imageFile != null
+                              ? CircleAvatar(
+                                  radius: 36,
+                                  backgroundImage:
+                                      FileImage(File(profilePicturePath!)),
+                                )
+                              : IconButton(
+                                  icon: Icon(Icons.person, size: 72),
+                                  onPressed: () {
+                                    _pickImage();
+                                  },
+                                ),
+                        ),
+                        Text(
+                          currentUser.email.toString(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.grey.shade700),
+                        ),
+                        const SizedBox(
+                          height: 50,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 25.0),
+                          child: Text(
+                            'My Profile',
+                            style: TextStyle(color: Colors.grey.shade800),
+                          ),
+                        ),
+                        MyTextBox(
+                          text: userData['username'],
+                          sectionName: 'username',
+                          onPressed: () {
+                            editField('username');
+                          },
+                        ),
+                        MyTextBox(
+                          text: userData['bio'],
+                          sectionName: 'bio',
+                          onPressed: () {
+                            editField('bio');
+                          },
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        MyTextBox(
+                          text: userData['contact'].toString(),
+                          sectionName: 'contact',
+                          onPressed: () {
+                            editField('contact');
+                          },
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                      ],
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text(snapshot.error.toString()),
+                    );
+                  }
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0),
+              child: Text(
+                'My Posts',
+                style: TextStyle(color: Colors.grey.shade800),
+              ),
+            ),
+            SizedBox(
+              height: MediaQuery.of(context).size.height *
+                  0.5, // Adjust height as needed
+              child: RefreshIndicator(
+                onRefresh: _refreshHomePage,
+                child: StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection("User Posts")
+                      .where("UserEmail", isEqualTo: currentUser.email)
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final userPosts = snapshot.data!.docs;
+                      return GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount:
+                              3, // Adjust the number of columns as needed
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                        ),
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: userPosts.length,
+                        itemBuilder: (context, index) {
+                          final post = userPosts[index];
+                          return GestureDetector(
+                            onTap: () {
+                              // Handle tap on post
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: Colors.grey[200],
+                              ),
+                              child: Image.network(
+                                post[
+                                    'Image'], // Assuming 'Image' is the field name for the image URL
+                                fit: BoxFit.cover,
+                              ),
                             ),
-                    ),
-                    Text(
-                      currentUser.email.toString(),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey.shade700),
-                    ),
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 25.0),
-                      child: Text(
-                        'My Profile',
-                        style: TextStyle(
-                            color: Colors.grey.shade800, fontSize: 17),
-                      ),
-                    ),
-                    MyTextBox(
-                      text: userData['username'],
-                      sectionName: 'username',
-                      onPressed: () {
-                        editField('username');
-                      },
-                    ),
-                    MyTextBox(
-                      text: userData['bio'],
-                      sectionName: 'bio',
-                      onPressed: () {
-                        editField('bio');
-                      },
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    MyTextBox(
-                      text: userData['contact'].toString(),
-                      sectionName: 'contact',
-                      onPressed: () {
-                        editField('contact');
-                      },
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    //display follower and following count
-                    Text(
-                      'Followers:$followersCount',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    Text('Following:$followingCount'),
-                  ],
-                );
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text(snapshot.error.toString()),
-                );
-              }
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            },
-          ),
+                          );
+                        },
+                      );
+                    } else if (snapshot.hasError) {
+                      return Center(
+                        child: Text("Error: ${snapshot.error}"),
+                      );
+                    }
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                ),
+
+                // StreamBuilder(
+                //   stream: FirebaseFirestore.instance
+                //       .collection("User Posts")
+                //       .orderBy("TimeStamp", descending: true)
+                //       .snapshots(),
+                //   builder: (context, snapshot) {
+                //     if (snapshot.hasData) {
+                //       return ListView.builder(
+                //         itemCount: snapshot.data!.docs.length,
+                //         itemBuilder: (context, index) {
+                //           final post = snapshot.data!.docs[index];
+                //           String timeText = post['EditedTime'] != null ? 'edited' : '';
+                //           String formattedTime = post['EditedTime'] != null
+                //               ? formatDate(post['EditedTime'])
+                //               : formatDate(post['TimeStamp']);
+                //           return FutureBuilder<Map<String, dynamic>>(
+                //             future: getUserData(post["UserEmail"]), // Fetch username asynchronously
+                //             builder: (context, userDataSnapshot) {
+                //               if (userDataSnapshot.hasData) {
+                //                 // final username = usernameSnapshot.data!;
+                //                 final userData = userDataSnapshot.data!;
+                //                 final username = userData["username"]; // Assuming "username" is a key in your user data
+                //                 final profileImage = userData["profile_img"]; // Assuming "profile_img" is a key for profile image URL
+                //                 return FeedPost(
+                //                   user: username,
+                //                   post: post["Message"],
+                //                   postId: post.id,
+                //                   likes: List<String>.from(post['Likes'] ?? []),
+                //                   time: '$formattedTime   $timeText',
+                //                   image: post['Image'],
+                //                   video: post['Video'],
+                //                   profileImage: profileImage,
+                //                 );
+                //               } else if (userDataSnapshot.hasError) {
+                //                 return Text("Error: ${userDataSnapshot.error}");
+                //               } else {
+                //                 return Text(" ");
+                //               }
+                //             },
+                //           );
+                //         },
+                //       );
+                //     } else if (snapshot.hasError) {
+                //       return Center(
+                //         child: Text("Error: $snapshot.error"),
+                //       );
+                //     }
+                //     return const Center(
+                //       child: CircularProgressIndicator(),
+                //     );
+                //   },
+                // ),
+              ),
+            ),
+          ],
         ),
-        const Padding(
-          padding: EdgeInsets.only(left: 25.0),
-        ),
-
-        //  isPrivate ? _buildPrivatePosts() : _buildPublicPosts(),
-      ])),
-    );
-  }
-
-  Widget _buildPrivatePosts() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection("Posts")
-          .where('owner', isEqualTo: currentUser.email)
-          .snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          // Display posts
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text(snapshot.error.toString()),
-          );
-        }
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
-  }
-
-  // Function to build public posts
-  Widget _buildPublicPosts() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection("Posts").snapshots(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          // Display posts
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text(snapshot.error.toString()),
-          );
-        }
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
-      },
+      ),
     );
   }
 
@@ -259,7 +299,7 @@ class _ProfilePageState extends State<ProfilePage> {
       // Update the profile picture URL in Firestore
       await userCollections
           .doc(currentUser.email)
-          .update({'profile_img': imageUrl ?? 'no image'});
+          .update({'profile_img': imageUrl});
     }
   }
 
@@ -291,12 +331,13 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _refreshHomePage() async {
+    // Set _isLoading to true to indicate that data is being loaded
     setState(() {
       _isLoading = true;
     });
 
     // Add some delay for demonstration purposes
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(Duration(seconds: 2));
 
     setState(() {
       _isLoading = false;

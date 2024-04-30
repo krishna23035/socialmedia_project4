@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 import 'package:socialmedia_project4/login/pages/showOtpDialog.dart';
+import '../../AUTH/google_sign_in/signin.dart';
 import '../../AUTH/phone_login/login_with_phone.dart';
 import '../widger/button.dart';
 import '../widger/custom_button.dart';
@@ -154,24 +155,31 @@ class _LoginPageState extends State<LoginPage>
                         ),
                       ],
                     ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const PhoneScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text('login with phone number'),
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        SizedBox(
-                          height: 15,
+                        SignInButton(
+                          Buttons.google,
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => GoogleLogin()),
+                            );
+                          },
                         ),
-                        ElevatedButton(
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => const LoginWithPhone(),
-                                ),
-                              );
-                            },
-                            child: const Text('login with phone number'))
-
-                        // ElevatedButton(
-                        //     onPressed: phoneSignIn, child: Text('SEND OTP'))
                       ],
                     ),
                   ],

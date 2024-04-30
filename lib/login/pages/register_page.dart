@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../AUTH/phone_login/login_with_phone.dart';
 import '../widger/button.dart';
 import '../widger/text_field.dart';
 
@@ -99,7 +100,7 @@ class _RegisteredPageState extends State<RegisteredPage>
           _showTapSplash(context, details.localPosition);
         },
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
@@ -144,6 +145,7 @@ class _RegisteredPageState extends State<RegisteredPage>
                     _isLoading
                         ? const CircularProgressIndicator()
                         : MyButton(text: 'SignUp', function: signUp),
+
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -154,21 +156,20 @@ class _RegisteredPageState extends State<RegisteredPage>
                           child: Text('Login Now',
                               style: TextStyle(color: Colors.blue.shade500)),
                         ),
-                        const SizedBox(
-                          height: 25,
-                        ),
-                        // IconButton(
-                        //     onPressed: () {
-                        //       Navigator.of(context).push(
-                        //         MaterialPageRoute(
-                        //           builder: (context) =>
-                        //               AuthServices().signInnWithGoogle(),
-                        //         ),
-                        //       );
-                        //     },
-                        //     icon: Icon(Icons.login)),
                       ],
                     ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const PhoneScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text('login with phone number')),
                     // ElevatedButton(
                     //   onPressed: () {
                     //     Navigator.of(context).push(MaterialPageRoute(

@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../../edit_post/edit_post_page.dart';
+
 class PostHead extends StatefulWidget {
   final String user;
   final String post;
@@ -106,7 +108,10 @@ class _PostHeadState extends State<PostHead> {
       elevation: 8.0,
     ).then((value) {
       if (value == 'edit') {
-        // Handle edit action
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => EditPostPage(
+                  postId: widget.postId,
+                )));
       } else if (value == 'delete') {
         // Handle delete action
       }

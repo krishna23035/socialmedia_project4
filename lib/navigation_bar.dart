@@ -21,33 +21,29 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: Container(
-        color: Colors.red,
+        color: Colors.black,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
           child: GNav(
             padding: EdgeInsets.all(16),
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            backgroundColor: Colors.red,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            backgroundColor: Colors.black,
             color: Colors.white,
             activeColor: Colors.white,
-            tabBackgroundColor: Colors.blue,
+            tabBackgroundColor: Colors.brown.shade500,
             gap: 8,
-            tabs: const [
+            tabs: [
               GButton(
                 icon: Icons.home,
                 text: 'Home',
               ),
               GButton(
-                icon: Icons.add_circle,
+                icon: Icons.add,
                 text: 'New Post',
-                iconColor: Colors.black,
-                iconSize: 35,
               ),
               GButton(
-                icon: Icons.person_add_rounded,
+                icon: Icons.person,
                 text: 'Profile',
-                iconColor: Colors.black,
-                iconSize: 30,
               ),
             ],
             selectedIndex: _selectedIndex,
