@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sign_in_button/sign_in_button.dart';
-import '../../AUTH/phone_login/phone_Auth.dart';
+import 'package:socialmedia_project4/login/pages/showOtpDialog.dart';
+import '../../AUTH/phone_login/login_with_phone.dart';
 import '../widger/button.dart';
+import '../widger/custom_button.dart';
 import '../widger/text_field.dart';
 
 class LoginPage extends StatefulWidget {
@@ -43,6 +45,35 @@ class _LoginPageState extends State<LoginPage>
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
   }
+
+  // Future<void> phoneSignIn(
+  //   BuildContext context,
+  //   String phoneNumber,
+  // ) async {
+  //   TextEditingController codeController = TextEditingController();
+  //   await _auth.verifyPhoneNumber(
+  //       verificationCompleted: (PhoneAuthCredential credential) async {
+  //         await _auth.signInWithCredential(credential);
+  //       },
+  //       verificationFailed: (e) {
+  //         print(e);
+  //       },
+  //       codeSent: (String verificationId, int? resendToken) async {
+  //         showOTPDialog(
+  //             codeController: codeController,
+  //             context: context,
+  //             onPressed: () async {
+  //               PhoneAuthCredential credential = PhoneAuthProvider.credential(
+  //                 verificationId: verificationId,
+  //                 smsCode: codeController.text.trim(),
+  //               );
+  //
+  //               await _auth.signInWithCredential(credential);
+  //               Navigator.pop(context);
+  //             });
+  //       },
+  //       codeAutoRetrievalTimeout: (String verificationId) {});
+  // }
 
   @override
   void initState() {
@@ -126,17 +157,19 @@ class _LoginPageState extends State<LoginPage>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // ElevatedButton(
-                        //   onPressed: () => Navigator.of(context).push(
-                        //     MaterialPageRoute(
-                        //       builder: (context) => PhoneAuth(),
-                        //     ),
-                        //   ),
-                        //   child: Text("Sign In With Google"),
-                        // ),
                         SizedBox(
                           height: 15,
                         ),
+                        ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginWithPhone(),
+                                ),
+                              );
+                            },
+                            child: const Text('login with phone number'))
+
                         // ElevatedButton(
                         //     onPressed: phoneSignIn, child: Text('SEND OTP'))
                       ],
