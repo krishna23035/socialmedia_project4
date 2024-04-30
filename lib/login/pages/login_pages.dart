@@ -1,10 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 import 'package:socialmedia_project4/login/pages/showOtpDialog.dart';
 import '../../AUTH/google_sign_in/signin.dart';
 import '../../AUTH/phone_login/login_with_phone.dart';
+import '../../navigation_bar.dart';
 import '../widger/button.dart';
 import '../widger/custom_button.dart';
 import '../widger/text_field.dart';
@@ -174,10 +176,7 @@ class _LoginPageState extends State<LoginPage>
                         SignInButton(
                           Buttons.google,
                           onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => GoogleLogin()),
-                            );
+                            signInWithGoogle(context);
                           },
                         ),
                       ],
@@ -192,12 +191,47 @@ class _LoginPageState extends State<LoginPage>
     );
   }
 
-  void handleGoogleSignIn() {
+  signInWithGoogle(BuildContext context) async {
     try {
-      GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
-      _auth.signInWithProvider(_googleAuthProvider);
+      // Sign out the current user from Firebase
+      await FirebaseAuth.instance.signOut();
+
+      // Sign out the current user from Google
+      await GoogleSignIn().signOut();
+
+      // Prompt the user to sign in with Google
+      GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+      if (googleUser != null) {
+        // If the user selects a Google account, proceed with sign-in
+        GoogleSignInAuthentication? googleAuth =
+            await googleUser.authentication;
+
+        AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth?.accessToken,
+          idToken: googleAuth?.idToken,
+        );
+
+        UserCredential userCredential =
+            await FirebaseAuth.instance.signInWithCredential(credential);
+
+        print(userCredential.user?.displayName);
+
+        // Navigate to your desired screen after successful sign-in
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                const CustomNavigationBar(), // Replace CustomNavigationBar() with your desired screen
+          ),
+        );
+      } else {
+        // Handle case when user cancels Google sign-in
+        print('Google sign-in cancelled by user.');
+      }
     } catch (error) {
-      print(error);
+      print("Error signing in with Google: $error");
+      // Handle error
     }
   }
 
