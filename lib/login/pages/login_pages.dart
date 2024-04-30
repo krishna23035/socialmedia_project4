@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:sign_in_button/sign_in_button.dart';
+import '../../AUTH/phone_login/phone_Auth.dart';
 import '../widger/button.dart';
 import '../widger/text_field.dart';
 
@@ -19,6 +21,7 @@ class _LoginPageState extends State<LoginPage>
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   void signIn() async {
     setState(() {
@@ -85,22 +88,24 @@ class _LoginPageState extends State<LoginPage>
                       width: 250,
                     ),
                     const SizedBox(height: 50),
-                    Text('Login Here',
+                    const Text('Login Here',
                         style: TextStyle(
                             fontSize: 30,
                             color: Colors.black,
                             fontStyle: FontStyle.italic)),
                     const SizedBox(height: 10),
-                    MyTextFeild(
+                    MyTextField(
                       controller: _usernameController,
                       hintText: 'enter your email',
                       obscureText: false,
+                      type: TextInputType.text,
                     ),
                     const SizedBox(height: 10),
-                    MyTextFeild(
+                    MyTextField(
                       controller: _passwordController,
                       hintText: 'enter your password',
                       obscureText: true,
+                      type: TextInputType.text,
                     ),
                     const SizedBox(height: 10),
                     _isLoading
@@ -118,6 +123,24 @@ class _LoginPageState extends State<LoginPage>
                         ),
                       ],
                     ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // ElevatedButton(
+                        //   onPressed: () => Navigator.of(context).push(
+                        //     MaterialPageRoute(
+                        //       builder: (context) => PhoneAuth(),
+                        //     ),
+                        //   ),
+                        //   child: Text("Sign In With Google"),
+                        // ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        // ElevatedButton(
+                        //     onPressed: phoneSignIn, child: Text('SEND OTP'))
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -126,6 +149,15 @@ class _LoginPageState extends State<LoginPage>
         ),
       ),
     );
+  }
+
+  void handleGoogleSignIn() {
+    try {
+      GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
+      _auth.signInWithProvider(_googleAuthProvider);
+    } catch (error) {
+      print(error);
+    }
   }
 
   void _showTapSplash(BuildContext context, Offset tapPosition) {

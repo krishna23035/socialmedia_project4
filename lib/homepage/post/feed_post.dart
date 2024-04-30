@@ -1,13 +1,10 @@
 import 'package:socialmedia_project4/homepage/post/comment.dart';
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:socialmedia_project4/homepage/post/post_head.dart';
 
 import '../../helper/helper_method.dart';
-import '../../snooze_button/snooze_button.dart';
 import 'comment_button.dart';
 import 'firebase_videoplayer.dart';
 import 'like_button.dart';
@@ -21,6 +18,7 @@ class FeedPost extends StatefulWidget {
   final String? image;
   final String? video;
   final String profileImage;
+  final String userId;
 
   const FeedPost(
       {super.key,
@@ -31,7 +29,8 @@ class FeedPost extends StatefulWidget {
       required this.time,
       this.image,
       this.video,
-      required this.profileImage});
+      required this.profileImage,
+      required this.userId});
 
   @override
   State<FeedPost> createState() => _FeedPostState();
@@ -44,6 +43,7 @@ class _FeedPostState extends State<FeedPost> {
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     isLiked = widget.likes.contains(currentUser.email);
   }
@@ -52,11 +52,18 @@ class _FeedPostState extends State<FeedPost> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      height: 750,
       //main container of post
       margin: const EdgeInsets.only(top: 5, left: 5, right: 5),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8), color: Colors.white),
+        borderRadius: BorderRadius.circular(8),
+        gradient: LinearGradient(
+          colors: [Colors.blue, Colors.green],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: [0.0, 1.0],
+          tileMode: TileMode.clamp,
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -68,6 +75,7 @@ class _FeedPostState extends State<FeedPost> {
               postId: widget.postId,
               time: widget.time,
               profileImage: widget.profileImage,
+              userId: widget.userId,
             ),
           ),
           SingleChildScrollView(
@@ -106,7 +114,6 @@ class _FeedPostState extends State<FeedPost> {
                   width: 10,
                 ),
                 CommentButton(onTap: showCommentDialog),
-                SnoozeIconButton(onPressed: Snooze),
               ],
             ),
           ),
@@ -114,10 +121,10 @@ class _FeedPostState extends State<FeedPost> {
             padding: const EdgeInsets.only(left: 18.0, right: 18, top: 8),
             child: Text(
               "${widget.likes.length} Likes",
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          const SizedBox(
+          SizedBox(
             height: 10,
           )
         ],
@@ -154,50 +161,6 @@ class _FeedPostState extends State<FeedPost> {
       "CommentedBy": currentUser.email,
       "CommentTime": Timestamp.now()
     });
-  }
-
-  void Snooze() {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-                title: const Text("Snooze Post"),
-                content:
-                    const Text("Do  you want to Snooze this post for 30 days?"),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("Cancel"),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      final commentDocs = await FirebaseFirestore.instance
-                          .collection("User Posts")
-                          .doc(widget.postId)
-                          .collection("Comments")
-                          .get();
-
-                      for (var doc in commentDocs.docs) {
-                        await FirebaseFirestore.instance
-                            .collection("User Posts")
-                            .doc(widget.postId)
-                            .collection("Comments")
-                            .doc(doc.id)
-                            .delete();
-                      }
-                      FirebaseFirestore.instance
-                          .collection("User Posts")
-                          .doc(widget.postId)
-                          .delete()
-                          .then((value) => print("post deleted"))
-                          .catchError((error) =>
-                              print("failed to Snooze post: $error"));
-
-// dismiss the dialog
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Delete"),
-                  ), // TextButton
-                ]));
   }
 
   void showCommentDialog() {
@@ -256,7 +219,7 @@ class _FeedPostState extends State<FeedPost> {
                       );
                     }
                     return ListView(
-                      physics: const NeverScrollableScrollPhysics(),
+                      physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true, // for nested lists
                       // physics: const NeverScrollableScrollPhysics(),
                       children: snapshot.data!.docs.map((doc) {

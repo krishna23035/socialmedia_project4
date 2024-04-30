@@ -120,22 +120,25 @@ class _RegisteredPageState extends State<RegisteredPage>
                     Text('Instagram Clone',
                         style: TextStyle(color: Colors.grey.shade100)),
                     const SizedBox(height: 10),
-                    MyTextFeild(
+                    MyTextField(
                       controller: _usernameController,
                       hintText: 'enter your email',
                       obscureText: false,
+                      type: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 10),
-                    MyTextFeild(
+                    MyTextField(
                       controller: _passwordController,
                       hintText: 'enter your password',
                       obscureText: true,
+                      type: TextInputType.text,
                     ),
                     const SizedBox(height: 10),
-                    MyTextFeild(
+                    MyTextField(
                       controller: _passwordConfirmController,
                       hintText: 'Re-enter your password',
                       obscureText: true,
+                      type: TextInputType.text,
                     ),
                     const SizedBox(height: 10),
                     _isLoading
@@ -151,8 +154,29 @@ class _RegisteredPageState extends State<RegisteredPage>
                           child: Text('Login Now',
                               style: TextStyle(color: Colors.blue.shade500)),
                         ),
+                        const SizedBox(
+                          height: 25,
+                        ),
+                        // IconButton(
+                        //     onPressed: () {
+                        //       Navigator.of(context).push(
+                        //         MaterialPageRoute(
+                        //           builder: (context) =>
+                        //               AuthServices().signInnWithGoogle(),
+                        //         ),
+                        //       );
+                        //     },
+                        //     icon: Icon(Icons.login)),
                       ],
                     ),
+                    // ElevatedButton(
+                    //   onPressed: () {
+                    //     Navigator.of(context).push(MaterialPageRoute(
+                    //         builder: (context) => const PhoneAuth()));
+                    //   },
+                    //    child: const Text("Register with Phone Number"),
+                    //   ),
+                    //     PhoneAuth(),
                   ],
                 ),
               ),

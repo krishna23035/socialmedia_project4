@@ -1,16 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
-import '../../edit_post/edit_post_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PostHead extends StatefulWidget {
   final String user;
   final String post;
   final String postId;
   final String time;
-  final String profileImage; // Add profileImage parameter
+  final String profileImage;
+  final String userId;
 
   const PostHead({
     super.key,
@@ -19,6 +17,7 @@ class PostHead extends StatefulWidget {
     required this.postId,
     required this.time,
     required this.profileImage,
+    required this.userId,
   });
 
   @override
@@ -26,56 +25,50 @@ class PostHead extends StatefulWidget {
 }
 
 class _PostHeadState extends State<PostHead> {
+  bool isFollowing = false; // Add a state variable to track follow status
+
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Row(children: [
-          const SizedBox(
-            width: 15,
+          CircleAvatar(
+            backgroundImage:
+                NetworkImage(widget.profileImage), // Display profile image
+            backgroundColor:
+                Colors.grey, // You can change this color or remove it
           ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
-                      widget.user,
-                      style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20),
-                    ),
-                    const SizedBox(
-                      width: 12,
-                    ),
-                    Text(
-                      'Post Date:',
-                      style:
-                          TextStyle(color: Colors.grey.shade700, fontSize: 18),
-                    ),
-                    Text(
-                      widget.time,
-                      style:
-                          TextStyle(color: Colors.grey.shade700, fontSize: 20),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+          const SizedBox(
+            width: 10,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.user,
+                style: TextStyle(
+                    color: Colors.grey.shade900, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                widget.time,
+                style: TextStyle(color: Colors.grey.shade700),
+              ),
+            ],
           ),
           const Spacer(),
+          TextButton(
+            onPressed: toggleFollow,
+            style: ButtonStyle(
+                foregroundColor: MaterialStateProperty.all(Colors.white),
+                backgroundColor:
+                    MaterialStateProperty.all(Colors.grey.shade900)),
+            child: Text(isFollowing ? 'unfollow' : 'follow'),
+          ),
           IconButton(
               onPressed: () {
                 showPopupMenu(context);
               },
-              icon: const Icon(
-                Icons.more_vert,
-                size: 33,
-              )),
+              icon: const Icon(Icons.more_vert)),
         ]),
       ],
     );
@@ -113,8 +106,7 @@ class _PostHeadState extends State<PostHead> {
       elevation: 8.0,
     ).then((value) {
       if (value == 'edit') {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => EditPostPage(postId: widget.postId)));
+        // Handle edit action
       } else if (value == 'delete') {
         // Handle delete action
       }
@@ -175,7 +167,68 @@ class _PostHeadState extends State<PostHead> {
                     },
                     child: const Text("Delete"),
                   ),
-// TextButton
                 ]));
+  }
+
+  void toggleFollow() async {
+    setState(() {
+      isFollowing = !isFollowing;
+    });
+
+    final followedUserId = widget.userId;
+    if (isFollowing) {
+      // Follow user
+      await followUser(followedUserId);
+    } else {
+      // Unfollow user
+      await unfollowUser(followedUserId);
+    }
+  }
+
+  Future<void> checkFollowStatus(String followedUserId) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final currentUserRef =
+          FirebaseFirestore.instance.collection('Users').doc(currentUser.email);
+      final followDoc = await currentUserRef
+          .collection('Following')
+          .doc(followedUserId)
+          .get();
+
+      setState(() {
+        isFollowing = followDoc.exists;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final followedUserId = widget.userId;
+    checkFollowStatus(followedUserId);
+  }
+
+  Future<void> followUser(String followedUserId) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final currentUserRef =
+          FirebaseFirestore.instance.collection('Users').doc(currentUser.email);
+
+      await currentUserRef.collection('Following').doc(followedUserId).set({
+        'followedUserId': followedUserId,
+      });
+      print('follower added');
+    }
+  }
+
+  Future<void> unfollowUser(String followedUserId) async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final currentUserRef =
+          FirebaseFirestore.instance.collection('Users').doc(currentUser.email);
+
+      await currentUserRef.collection('Following').doc(followedUserId).delete();
+    }
+    print('follower removed');
   }
 }

@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                       itemBuilder: (context, index) {
                         final post = snapshot.data!.docs[index];
                         String timeText =
-                            post['EditedTime'] != null ? 'edited' : '';
+                            post['EditedTime'] != null ? 'Edited' : 'no  date';
                         String formattedTime = post['EditedTime'] != null
                             ? formatDate(post['EditedTime'])
                             : formatDate(post['TimeStamp']);
@@ -71,7 +71,9 @@ class _HomePageState extends State<HomePage> {
                                 time: '$formattedTime   $timeText',
                                 image: post['Image'],
                                 video: post['Video'],
-                                profileImage: profileImage ?? 'no imgage',
+                                profileImage: profileImage ??
+                                    "https://firebasestorage.googleapis.com/v0/b/social-flutter-harshk.appspot.com/o/user.png?alt=media&token=173cf9e4-ce01-4572-8bef-776c6b714c6d",
+                                userId: post['UserEmail'],
                               );
                             } else if (userDataSnapshot.hasError) {
                               return Text("Error: ${userDataSnapshot.error}");
