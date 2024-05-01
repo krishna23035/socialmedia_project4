@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:socialmedia_project4/profile/textbos.dart';
 
 import '../Homepage/Post/feed_post.dart';
+import '../page/hidden_post.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -70,6 +71,16 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // ElevatedButton(
+            //   onPressed: () {
+            //     Navigator.of(context).push(
+            //       MaterialPageRoute(
+            //         builder: (context) => HiddenPost(), // Replace HiddenPost with HiddenPostPage
+            //       ),
+            //     );
+            //   },
+            //   child: Text('Hidden Post'),
+            // ),
             SizedBox(
               height: MediaQuery.of(context).size.height *
                   0.5, // Adjust height as needed

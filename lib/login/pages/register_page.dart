@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../AUTH/phone_login/login_with_phone.dart';
-import '../widger/button.dart';
-import '../widger/text_field.dart';
+import '../widget/button.dart';
+import '../widget/text_field.dart';
 
 class RegisteredPage extends StatefulWidget {
   final Function()? onTap;
@@ -165,7 +165,7 @@ class _RegisteredPageState extends State<RegisteredPage>
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => const PhoneScreen(),
+                              builder: (context) => const LoginWithPhone(),
                             ),
                           );
                         },

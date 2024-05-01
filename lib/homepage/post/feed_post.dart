@@ -1,12 +1,12 @@
-import 'package:socialmedia_project4/homepage/post/comment.dart';
+import 'package:socialmedia_project4/login/widget/comment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:socialmedia_project4/homepage/post/post_head.dart';
 
 import '../../helper/helper_method.dart';
-import 'comment_button.dart';
-import 'firebase_videoplayer.dart';
+import '../../login/widget/comment_button.dart';
+import '../new_post/firebase_videoplayer.dart';
 import 'like_button.dart';
 
 class FeedPost extends StatefulWidget {
@@ -19,18 +19,21 @@ class FeedPost extends StatefulWidget {
   final String? video;
   final String profileImage;
   final String userId;
+  // final VoidCallback onHide; // Added onHide callback
 
-  const FeedPost(
-      {super.key,
-      required this.user,
-      required this.post,
-      required this.postId,
-      required this.likes,
-      required this.time,
-      this.image,
-      this.video,
-      required this.profileImage,
-      required this.userId});
+  const FeedPost({
+    Key? key,
+    required this.user,
+    required this.post,
+    required this.postId,
+    required this.likes,
+    required this.time,
+    this.image,
+    this.video,
+    required this.profileImage,
+    required this.userId,
+    //   required this.onHide, // Define onHide parameter
+  }) : super(key: key);
 
   @override
   State<FeedPost> createState() => _FeedPostState();
@@ -43,7 +46,6 @@ class _FeedPostState extends State<FeedPost> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     isLiked = widget.likes.contains(currentUser.email);
   }
@@ -52,11 +54,10 @@ class _FeedPostState extends State<FeedPost> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Container(
-      //main container of post
       margin: const EdgeInsets.only(top: 5, left: 5, right: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [Colors.blue, Colors.green],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -76,11 +77,11 @@ class _FeedPostState extends State<FeedPost> {
               time: widget.time,
               profileImage: widget.profileImage,
               userId: widget.userId,
+              //     onHide: widget.onHide, // Pass onHide callback to PostHead
             ),
           ),
           SingleChildScrollView(
             child: SizedBox(
-              //caption container
               width: size.width,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,10 +122,10 @@ class _FeedPostState extends State<FeedPost> {
             padding: const EdgeInsets.only(left: 18.0, right: 18, top: 8),
             child: Text(
               "${widget.likes.length} Likes",
-              style: TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           )
         ],
@@ -163,6 +164,11 @@ class _FeedPostState extends State<FeedPost> {
     });
   }
 
+  // void hidePost() {
+  //   // Trigger the onHide callback
+  //   widget.onHide();
+  // }
+
   void showCommentDialog() {
     showModalBottomSheet(
       context: context,
@@ -200,11 +206,11 @@ class _FeedPostState extends State<FeedPost> {
                       _commentTextController.clear();
                       Navigator.pop(context);
                     },
-                    icon: Icon(Icons.add_circle),
+                    icon: const Icon(Icons.add_circle),
                   ),
                 ],
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection("User Posts")
@@ -219,9 +225,8 @@ class _FeedPostState extends State<FeedPost> {
                       );
                     }
                     return ListView(
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true, // for nested lists
-                      // physics: const NeverScrollableScrollPhysics(),
                       children: snapshot.data!.docs.map((doc) {
                         final commentData = doc.data() as Map<String, dynamic>;
                         return Comment(

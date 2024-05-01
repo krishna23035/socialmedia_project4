@@ -6,10 +6,9 @@ import 'package:sign_in_button/sign_in_button.dart';
 import 'package:socialmedia_project4/login/pages/showOtpDialog.dart';
 import '../../AUTH/google_sign_in/signin.dart';
 import '../../AUTH/phone_login/login_with_phone.dart';
-import '../../navigation_bar.dart';
-import '../widger/button.dart';
-import '../widger/custom_button.dart';
-import '../widger/text_field.dart';
+import '../../snooze_button/navigation_bar.dart';
+import '../widget/button.dart';
+import '../widget/text_field.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
@@ -164,7 +163,7 @@ class _LoginPageState extends State<LoginPage>
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => const PhoneScreen(),
+                            builder: (context) => const LoginWithPhone(),
                           ),
                         );
                       },

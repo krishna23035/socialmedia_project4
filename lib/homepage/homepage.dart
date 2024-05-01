@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                             } else if (userDataSnapshot.hasError) {
                               return Text("Error: ${userDataSnapshot.error}");
                             } else {
-                              return Text(" ");
+                              return const Text(" ");
                             }
                           },
                         );
@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> {
     });
 
     // Add some delay for demonstration purposes
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
 
     setState(() {
       _isLoading = false;

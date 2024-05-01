@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:socialmedia_project4/profile/profile_page.dart';
 
-import 'custom_appbar.dart';
-import 'homepage/homepage.dart';
-import 'homepage/new_post/new_post.dart';
+import '../custom_appbar.dart';
+import '../homepage/homepage.dart';
+import '../homepage/new_post/new_post.dart';
 
 class CustomNavigationBar extends StatefulWidget {
   const CustomNavigationBar({super.key});
@@ -21,18 +21,18 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: Container(
-        color: Colors.black,
+        color: Colors.green,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
           child: GNav(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            backgroundColor: Colors.black,
-            color: Colors.white,
+            backgroundColor: Colors.green,
+            color: Colors.black,
             activeColor: Colors.white,
-            tabBackgroundColor: Colors.brown.shade500,
-            gap: 8,
-            tabs: [
+            tabBackgroundColor: Colors.blue,
+            gap: 12,
+            tabs: const [
               GButton(
                 icon: Icons.home,
                 text: 'Home',
@@ -64,7 +64,12 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
             _selectedIndex = index;
           });
         },
-        children: const [HomePage(), NewPostsBottom(), ProfilePage()],
+        children: const [
+          HomePage(),
+          NewPostsBottom(),
+          ProfilePage(),
+          //  HiddenPost(postId: widget.postId)
+        ],
       ),
     );
   }

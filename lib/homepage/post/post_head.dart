@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import '../../edit_post/edit_post_page.dart';
 
@@ -78,7 +79,7 @@ class _PostHeadState extends State<PostHead> {
 
   void showPopupMenu(BuildContext context) {
     final RenderBox overlay =
-        Overlay.of(context)!.context.findRenderObject() as RenderBox;
+        Overlay.of(context).context.findRenderObject() as RenderBox;
     final RenderBox button = context.findRenderObject() as RenderBox;
     final Offset position = button.localToGlobal(Offset.zero);
 
@@ -234,6 +235,8 @@ class _PostHeadState extends State<PostHead> {
 
       await currentUserRef.collection('Following').doc(followedUserId).delete();
     }
-    print('follower removed');
+    if (kDebugMode) {
+      print('follower removed');
+    }
   }
 }

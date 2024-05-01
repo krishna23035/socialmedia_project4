@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../login/widger/button.dart';
-import '../../login/widger/text_field.dart';
-import '../../navigation_bar.dart';
+import '../../login/widget/button.dart';
+import '../../login/widget/text_field.dart';
+import '../../snooze_button/navigation_bar.dart';
 
 class OTPScreen extends StatefulWidget {
   final String phoneNumber;

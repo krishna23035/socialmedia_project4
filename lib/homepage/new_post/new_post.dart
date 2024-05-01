@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:socialmedia_project4/homepage/new_post/video_player.dart';
 
-import '../../login/widger/text_field.dart';
+import '../../login/widget/text_field.dart';
 
 class NewPostsBottom extends StatefulWidget {
   const NewPostsBottom({super.key});

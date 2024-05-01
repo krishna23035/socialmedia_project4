@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../login/pages/login_register.dart';
-import '../navigation_bar.dart';
+import '../snooze_button/navigation_bar.dart';
 
 class Auth extends StatelessWidget {
   const Auth({super.key});
