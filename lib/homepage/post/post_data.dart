@@ -2,12 +2,12 @@ import 'package:socialmedia_project4/login/widget/comment.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:socialmedia_project4/homepage/post/post_head.dart';
+import 'package:socialmedia_project4/homepage/post/post_header.dart';
 
+import '../../edit_post/new_post/firebase_videoplayer.dart';
 import '../../helper/helper_method.dart';
 import '../../login/widget/comment_button.dart';
-import '../new_post/firebase_videoplayer.dart';
-import 'like_button.dart';
+import '../../login/widget/like_button.dart';
 
 class FeedPost extends StatefulWidget {
   final String user;

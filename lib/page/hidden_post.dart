@@ -1,24 +1,25 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class HiddenPost {
-  // final String? postId;
+class HiddenPost extends StatefulWidget {
+  const HiddenPost({
+    super.key,
+  });
 
-  //  HiddenPost({
-  // //    this.postId,
-  //  });
+  @override
+  State<HiddenPost> createState() => _HiddenPostState();
+}
 
-  // Factory method to create a HiddenPost instance from a DocumentSnapshot
-  // factory HiddenPost.fromSnapshot(DocumentSnapshot snapshot) {
-  //   return HiddenPost(
-  //     // postId:
-  // //     //     snapshot['postId'] ?? '', // Provide a default value if postId is null
-  // //   );
-  // }
-
-  // Method to convert HiddenPost instance to a Map
-  // Map<String, dynamic> toMap() {
-  //   // return {
-  //   //   'postId': postId,
-  //   // };
-  // }
+class _HiddenPostState extends State<HiddenPost> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+      ),
+      body: const Column(
+        children: [],
+      ),
+    );
+  }
 }

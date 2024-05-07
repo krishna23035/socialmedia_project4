@@ -103,7 +103,7 @@ class _LoginPageState extends State<LoginPage>
           _showTapSplash(context, details.localPosition);
         },
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.bottomCenter, // Start from bottom
               end: Alignment.topCenter, // End at top

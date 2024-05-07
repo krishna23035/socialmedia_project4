@@ -9,7 +9,7 @@ class SnoozeIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: onPressed,
-      icon: Icon(Icons.snooze),
+      icon: const Icon(Icons.snooze),
     );
   }
 }

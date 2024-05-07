@@ -2,10 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:socialmedia_project4/profile/profile_page.dart';
-
-import '../custom_appbar.dart';
+import '../appbar.dart';
+import '../edit_post/new_post/new_post.dart';
 import '../homepage/homepage.dart';
-import '../homepage/new_post/new_post.dart';
 
 class CustomNavigationBar extends StatefulWidget {
   const CustomNavigationBar({super.key});

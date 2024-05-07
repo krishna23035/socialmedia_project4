@@ -6,7 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
-import 'package:socialmedia_project4/homepage/new_post/video_player.dart';
+import 'package:socialmedia_project4/edit_post/new_post/video_player.dart';
 
 import '../../login/widget/text_field.dart';
 
@@ -89,7 +89,10 @@ class _NewPostsBottomState extends State<NewPostsBottom> {
                   children: [
                     const Text(
                       'Public post',
-                      style: TextStyle(color: Colors.blue),
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold),
                     ),
                     Switch(
                       value: _isPublic,
@@ -144,7 +147,7 @@ class _NewPostsBottomState extends State<NewPostsBottom> {
         context: context,
         barrierDismissible:
             false, // Prevent dismissing the dialog by tapping outside
-        builder: (context) => AlertDialog(
+        builder: (context) => const AlertDialog(
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

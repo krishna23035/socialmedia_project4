@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import '../../login/widget/button.dart';
 import '../../login/widget/text_field.dart';
 import '../../snooze_button/navigation_bar.dart';
 
 class LoginWithPhone extends StatefulWidget {
-  const LoginWithPhone({Key? key}) : super(key: key);
+  const LoginWithPhone({super.key});
 
   @override
   State<LoginWithPhone> createState() => _LoginWithPhoneState();
@@ -27,7 +26,7 @@ class _LoginWithPhoneState extends State<LoginWithPhone> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.bottomCenter, // Start from bottom
             end: Alignment.topCenter, // End at top

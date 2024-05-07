@@ -4,10 +4,7 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:socialmedia_project4/profile/textbos.dart';
-
-import '../Homepage/Post/feed_post.dart';
-import '../page/hidden_post.dart';
+import 'package:socialmedia_project4/profile/text_button.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -71,16 +68,6 @@ class _ProfilePageState extends State<ProfilePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // ElevatedButton(
-            //   onPressed: () {
-            //     Navigator.of(context).push(
-            //       MaterialPageRoute(
-            //         builder: (context) => HiddenPost(), // Replace HiddenPost with HiddenPostPage
-            //       ),
-            //     );
-            //   },
-            //   child: Text('Hidden Post'),
-            // ),
             SizedBox(
               height: MediaQuery.of(context).size.height *
                   0.5, // Adjust height as needed
@@ -233,59 +220,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     );
                   },
                 ),
-
-                // StreamBuilder(
-                //   stream: FirebaseFirestore.instance
-                //       .collection("User Posts")
-                //       .orderBy("TimeStamp", descending: true)
-                //       .snapshots(),
-                //   builder: (context, snapshot) {
-                //     if (snapshot.hasData) {
-                //       return ListView.builder(
-                //         itemCount: snapshot.data!.docs.length,
-                //         itemBuilder: (context, index) {
-                //           final post = snapshot.data!.docs[index];
-                //           String timeText = post['EditedTime'] != null ? 'edited' : '';
-                //           String formattedTime = post['EditedTime'] != null
-                //               ? formatDate(post['EditedTime'])
-                //               : formatDate(post['TimeStamp']);
-                //           return FutureBuilder<Map<String, dynamic>>(
-                //             future: getUserData(post["UserEmail"]), // Fetch username asynchronously
-                //             builder: (context, userDataSnapshot) {
-                //               if (userDataSnapshot.hasData) {
-                //                 // final username = usernameSnapshot.data!;
-                //                 final userData = userDataSnapshot.data!;
-                //                 final username = userData["username"]; // Assuming "username" is a key in your user data
-                //                 final profileImage = userData["profile_img"]; // Assuming "profile_img" is a key for profile image URL
-                //                 return FeedPost(
-                //                   user: username,
-                //                   post: post["Message"],
-                //                   postId: post.id,
-                //                   likes: List<String>.from(post['Likes'] ?? []),
-                //                   time: '$formattedTime   $timeText',
-                //                   image: post['Image'],
-                //                   video: post['Video'],
-                //                   profileImage: profileImage,
-                //                 );
-                //               } else if (userDataSnapshot.hasError) {
-                //                 return Text("Error: ${userDataSnapshot.error}");
-                //               } else {
-                //                 return Text(" ");
-                //               }
-                //             },
-                //           );
-                //         },
-                //       );
-                //     } else if (snapshot.hasError) {
-                //       return Center(
-                //         child: Text("Error: $snapshot.error"),
-                //       );
-                //     }
-                //     return const Center(
-                //       child: CircularProgressIndicator(),
-                //     );
-                //   },
-                // ),
               ),
             ),
           ],

@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -9,7 +10,7 @@ import '../helper/helper_method.dart';
 class EditPostPage extends StatefulWidget {
   final String postId;
 
-  const EditPostPage({Key? key, required this.postId}) : super(key: key);
+  const EditPostPage({super.key, required this.postId});
 
   @override
   _EditPostPageState createState() => _EditPostPageState(postId: postId);
@@ -54,7 +55,9 @@ class _EditPostPageState extends State<EditPostPage> {
         });
       }
     } catch (error) {
-      print('Error fetching post content: $error');
+      if (kDebugMode) {
+        print('Error fetching post content: $error');
+      }
     }
   }
 
@@ -73,7 +76,9 @@ class _EditPostPageState extends State<EditPostPage> {
       Navigator.pop(
           context); // Go back to the previous screen after updating the post
     } catch (error) {
-      print('Error updating post: $error');
+      if (kDebugMode) {
+        print('Error updating post: $error');
+      }
     }
   }
 
@@ -81,10 +86,10 @@ class _EditPostPageState extends State<EditPostPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Post'),
+        title: const Text('Edit Post'),
         actions: [
           IconButton(
-            icon: Icon(Icons.save),
+            icon: const Icon(Icons.save),
             onPressed: () {
               final newPostText = _postTextController.text.trim();
               if (newPostText.isNotEmpty) {
@@ -94,14 +99,14 @@ class _EditPostPageState extends State<EditPostPage> {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text('Error'),
-                    content: Text('Post text cannot be empty.'),
+                    title: const Text('Error'),
+                    content: const Text('Post text cannot be empty.'),
                     actions: [
                       TextButton(
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: Text('OK'),
+                        child: const Text('OK'),
                       ),
                     ],
                   ),

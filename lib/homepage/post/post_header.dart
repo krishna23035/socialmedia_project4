@@ -105,6 +105,16 @@ class _PostHeadState extends State<PostHead> {
           value: 'delete',
           child: const Text('Delete'),
         ),
+        PopupMenuItem(
+          onTap: SnoozePost,
+          value: 'Snooze',
+          child: const Text('Snooze for always'),
+        ),
+        PopupMenuItem(
+          onTap: HidePost,
+          value: 'Hide',
+          child: const Text('Hide '),
+        ),
       ],
       elevation: 8.0,
     ).then((value) {
@@ -191,6 +201,63 @@ class _PostHeadState extends State<PostHead> {
     }
   }
 
+  void SnoozePost() {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+                title: const Text("Snooze Post"),
+                content:
+                    const Text("Are you sure you want to Snooze this post?"),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Cancel"),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final commentDocs = await FirebaseFirestore.instance
+                          .collection("User Posts")
+                          .doc(widget.postId)
+                          .collection("Comments")
+                          .get();
+
+                      for (var doc in commentDocs.docs) {
+                        await FirebaseFirestore.instance
+                            .collection("User Posts")
+                            .doc(widget.postId)
+                            .collection("Comments")
+                            .doc(doc.id)
+                            .delete();
+                      }
+
+                      // Delete the post
+                      FirebaseFirestore.instance
+                          .collection("User Posts")
+                          .doc(widget.postId)
+                          .delete()
+                          .then((value) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Post Snoozed for always"),
+                            duration: Duration(
+                                seconds: 2), // Adjust the duration as needed
+                          ),
+                        );
+                      }).catchError((error) {
+                        SnackBar(
+                          content: Text("Failed to Snooze post: $error"),
+                          duration: const Duration(seconds: 2),
+                        );
+                      });
+
+                      // Dismiss the dialog
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Snooze"),
+                  ),
+                ]));
+  }
+
   Future<void> checkFollowStatus(String followedUserId) async {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
@@ -205,6 +272,62 @@ class _PostHeadState extends State<PostHead> {
         isFollowing = followDoc.exists;
       });
     }
+  }
+
+  void HidePost() {
+    showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+                title: const Text("Hide Post"),
+                content: const Text("Are you sure you want to Hide this post?"),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("Cancel"),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final commentDocs = await FirebaseFirestore.instance
+                          .collection("User Posts")
+                          .doc(widget.postId)
+                          .collection("Comments")
+                          .get();
+
+                      for (var doc in commentDocs.docs) {
+                        await FirebaseFirestore.instance
+                            .collection("User Posts")
+                            .doc(widget.postId)
+                            .collection("Comments")
+                            .doc(doc.id)
+                            .delete();
+                      }
+
+                      // Delete the post
+                      FirebaseFirestore.instance
+                          .collection("User Posts")
+                          .doc(widget.postId)
+                          .delete()
+                          .then((value) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Post Hidden"),
+                            duration: Duration(
+                                seconds: 2), // Adjust the duration as needed
+                          ),
+                        );
+                      }).catchError((error) {
+                        SnackBar(
+                          content: Text("Failed to Hide post: $error"),
+                          duration: const Duration(seconds: 2),
+                        );
+                      });
+
+                      // Dismiss the dialog
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Hide"),
+                  ),
+                ]));
   }
 
   @override
