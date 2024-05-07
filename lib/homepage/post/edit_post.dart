@@ -7,7 +7,7 @@ import '../../helper/helper_method.dart';
 class EditPostPage extends StatefulWidget {
   final String postId;
 
-  const EditPostPage({Key? key, required this.postId}) : super(key: key);
+  const EditPostPage({super.key, required this.postId});
 
   @override
   _EditPostPageState createState() => _EditPostPageState(postId: postId);

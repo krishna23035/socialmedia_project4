@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../edit_post/edit_post_page.dart';
 
@@ -29,6 +28,24 @@ class PostHead extends StatefulWidget {
 
 class _PostHeadState extends State<PostHead> {
   bool isFollowing = false; // Add a state variable to track follow status
+
+  @override
+  void initState() {
+    super.initState();
+    final followedUserId = widget.userId;
+    checkFollowStatus(followedUserId);
+  }
+
+  @override
+  void dispose() {
+    // Cancel any ongoing asynchronous operations here
+    super.dispose();
+  }
+
+  void displayMessage(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +96,7 @@ class _PostHeadState extends State<PostHead> {
 
   void showPopupMenu(BuildContext context) {
     final RenderBox overlay =
-        Overlay.of(context).context.findRenderObject() as RenderBox;
+        Overlay.of(context)!.context.findRenderObject() as RenderBox;
     final RenderBox button = context.findRenderObject() as RenderBox;
     final Offset position = button.localToGlobal(Offset.zero);
 
@@ -96,9 +113,21 @@ class _PostHeadState extends State<PostHead> {
       context: context,
       position: positionPopup,
       items: [
-        const PopupMenuItem(
+        PopupMenuItem(
+          onTap: () {
+            showModalBottomSheet(
+              elevation: 10,
+              context: context,
+              builder: (BuildContext context) {
+                return SizedBox(
+                  height: 700,
+                  child: EditPostPage(postId: widget.postId),
+                );
+              },
+            );
+          },
           value: 'edit',
-          child: Text('Edit'),
+          child: const Text('Edit'),
         ),
         PopupMenuItem(
           onTap: deletePost,
@@ -106,27 +135,148 @@ class _PostHeadState extends State<PostHead> {
           child: const Text('Delete'),
         ),
         PopupMenuItem(
-          onTap: SnoozePost,
-          value: 'Snooze',
-          child: const Text('Snooze for always'),
+          onTap: hidePost,
+          value: 'hide',
+          child: const Text('Hide'),
         ),
         PopupMenuItem(
-          onTap: HidePost,
-          value: 'Hide',
-          child: const Text('Hide '),
+          value: 'snooze',
+          child: const Text('Snooze'),
+          // Add onTap handler for snooze action
+          onTap: () {
+            showSnoozeOptions(context);
+          },
         ),
       ],
       elevation: 8.0,
     ).then((value) {
       if (value == 'edit') {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => EditPostPage(
-                  postId: widget.postId,
-                )));
+        // Handle edit action
       } else if (value == 'delete') {
         // Handle delete action
       }
     });
+  }
+
+  void showSnoozeOptions(BuildContext context) {
+    // Show a dialog or bottom sheet to select snooze duration
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Snooze Post'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ListTile(
+                title: const Text('Always'),
+                onTap: () {
+                  snoozePost(const Duration(days: 365));
+                  Navigator.pop(context);
+                },
+              ),
+              // ListTile(
+              //   title: const Text('1 hour'),
+              //   onTap: () {
+              //     snoozePost(const Duration(hours: 1));
+              //   },
+              // ),
+              // ListTile(
+              //   title: const Text('1 day'),
+              //   onTap: () {
+              //     snoozePost(const Duration(days: 1));
+              //   },
+              // ),
+              ListTile(
+                title: const Text('30 days'),
+                onTap: () {
+                  snoozePost(const Duration(days: 30));
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void snoozePost(Duration duration) async {
+    final currentTime = DateTime.now();
+    final snoozeEndTime = currentTime.add(duration);
+
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final userRef =
+          FirebaseFirestore.instance.collection('Users').doc(currentUser.email);
+      final postId = widget.postId;
+
+      // Add post ID to snoozed posts with snooze end time
+      await userRef.update({
+        'snoozed_posts.$postId': snoozeEndTime.toUtc(), // Store end time as UTC
+      });
+
+      final userDisplayName = widget.user;
+      final snackbarMessage =
+          "This post will be available after ${duration.inMinutes} minutes.";
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(snackbarMessage)));
+
+      // Calculate delay duration for removing expired snoozed posts
+      final delayDuration = snoozeEndTime.difference(currentTime);
+
+      // Schedule a task to remove expired snoozed posts after snooze time ends
+      Future.delayed(delayDuration, () async {
+        _removeExpiredSnoozedPosts(postId,
+            await userRef.get().then((snapshot) => snapshot.data() ?? {}));
+      });
+    }
+  }
+
+  void _removeExpiredSnoozedPosts(
+      String postId, Map<String, dynamic> userData) {
+    // Get current time
+    final currentTime = DateTime.now();
+
+    // Retrieve snooze end time from user's collection
+    final snoozedPosts = Map<String, dynamic>.from(
+        userData['snoozed_posts'] as Map<String, dynamic>? ?? {});
+    if (snoozedPosts.containsKey(postId)) {
+      final snoozeEndTime = (snoozedPosts[postId] as Timestamp)
+          .toDate(); // Convert Firestore timestamp to DateTime
+
+      // If snooze time has passed, remove post ID from snoozed posts
+      if (currentTime.isAfter(snoozeEndTime)) {
+        final currentUser = FirebaseAuth.instance.currentUser;
+        if (currentUser != null) {
+          final userRef = FirebaseFirestore.instance
+              .collection('Users')
+              .doc(currentUser.email);
+          userRef.update({'snoozed_posts.$postId': FieldValue.delete()});
+        }
+
+        // Check if the state is still mounted before showing the dialog
+        if (mounted) {
+          // Show a dialog indicating that the post is now available
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text("Post Available"),
+              content: Text(
+                  "The snooze time for this post has ended. Please refresh to see the post."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("OK"),
+                ),
+              ],
+            ),
+          );
+        }
+      }
+    }
   }
 
   void deletePost() {
@@ -201,66 +351,10 @@ class _PostHeadState extends State<PostHead> {
     }
   }
 
-  void SnoozePost() {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-                title: const Text("Snooze Post"),
-                content:
-                    const Text("Are you sure you want to Snooze this post?"),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("Cancel"),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      final commentDocs = await FirebaseFirestore.instance
-                          .collection("User Posts")
-                          .doc(widget.postId)
-                          .collection("Comments")
-                          .get();
-
-                      for (var doc in commentDocs.docs) {
-                        await FirebaseFirestore.instance
-                            .collection("User Posts")
-                            .doc(widget.postId)
-                            .collection("Comments")
-                            .doc(doc.id)
-                            .delete();
-                      }
-
-                      // Delete the post
-                      FirebaseFirestore.instance
-                          .collection("User Posts")
-                          .doc(widget.postId)
-                          .delete()
-                          .then((value) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Post Snoozed for always"),
-                            duration: Duration(
-                                seconds: 2), // Adjust the duration as needed
-                          ),
-                        );
-                      }).catchError((error) {
-                        SnackBar(
-                          content: Text("Failed to Snooze post: $error"),
-                          duration: const Duration(seconds: 2),
-                        );
-                      });
-
-                      // Dismiss the dialog
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Snooze"),
-                  ),
-                ]));
-  }
-
   Future<void> checkFollowStatus(String followedUserId) async {
     final currentUser = FirebaseAuth.instance.currentUser;
-    if (currentUser != null) {
+    if (currentUser != null && mounted) {
+      // Add mounted check
       final currentUserRef =
           FirebaseFirestore.instance.collection('Users').doc(currentUser.email);
       final followDoc = await currentUserRef
@@ -268,73 +362,13 @@ class _PostHeadState extends State<PostHead> {
           .doc(followedUserId)
           .get();
 
-      setState(() {
-        isFollowing = followDoc.exists;
-      });
+      if (mounted) {
+        // Check mounted again before calling setState()
+        setState(() {
+          isFollowing = followDoc.exists;
+        });
+      }
     }
-  }
-
-  void HidePost() {
-    showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-                title: const Text("Hide Post"),
-                content: const Text("Are you sure you want to Hide this post?"),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("Cancel"),
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      final commentDocs = await FirebaseFirestore.instance
-                          .collection("User Posts")
-                          .doc(widget.postId)
-                          .collection("Comments")
-                          .get();
-
-                      for (var doc in commentDocs.docs) {
-                        await FirebaseFirestore.instance
-                            .collection("User Posts")
-                            .doc(widget.postId)
-                            .collection("Comments")
-                            .doc(doc.id)
-                            .delete();
-                      }
-
-                      // Delete the post
-                      FirebaseFirestore.instance
-                          .collection("User Posts")
-                          .doc(widget.postId)
-                          .delete()
-                          .then((value) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Post Hidden"),
-                            duration: Duration(
-                                seconds: 2), // Adjust the duration as needed
-                          ),
-                        );
-                      }).catchError((error) {
-                        SnackBar(
-                          content: Text("Failed to Hide post: $error"),
-                          duration: const Duration(seconds: 2),
-                        );
-                      });
-
-                      // Dismiss the dialog
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Hide"),
-                  ),
-                ]));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final followedUserId = widget.userId;
-    checkFollowStatus(followedUserId);
   }
 
   Future<void> followUser(String followedUserId) async {
@@ -346,7 +380,7 @@ class _PostHeadState extends State<PostHead> {
       await currentUserRef.collection('Following').doc(followedUserId).set({
         'followedUserId': followedUserId,
       });
-      print('follower added');
+      displayMessage('follower added');
     }
   }
 
@@ -358,8 +392,18 @@ class _PostHeadState extends State<PostHead> {
 
       await currentUserRef.collection('Following').doc(followedUserId).delete();
     }
-    if (kDebugMode) {
-      print('follower removed');
+    displayMessage('follower removed');
+  }
+
+  void hidePost() async {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      final userRef =
+          FirebaseFirestore.instance.collection('Users').doc(currentUser.email);
+      await userRef.update({
+        'hidden_posts': FieldValue.arrayUnion([widget.postId])
+      });
+      displayMessage("Post marked as Hidden");
     }
   }
 }
