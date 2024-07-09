@@ -20,3 +20,6 @@ samples, guidance on mobile development, and a full API reference.
 
 ![WhatsApp Image 2024-07-09 at 2 50 27 PM](https://github.com/krishna23035/socialmedia_project4/assets/112431940/1537db3b-47bf-43de-8630-f65befd606f0)
 
+![profile](https://github.com/krishna23035/socialmedia_project4/assets/112431940/e5864773-b874-4ac9-93ed-9932e936a9b1)
+
+![posts feed](https://github.com/krishna23035/socialmedia_project4/assets/112431940/19ebfb16-3e78-4e14-a627-cb8968b89854)
